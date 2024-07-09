@@ -253,6 +253,7 @@ function DecrementButton() {
   const handleDecrement = () => {
     const newIdx = currentNote.idx.val - 1;
     currentNote.idx.func(newIdx < 0 ? 0 : newIdx);
+    currentNote.target_span.func(null);
   };
 
   return (
@@ -268,6 +269,7 @@ function IncrementButton() {
   const handleIncrement = () => {
     const newIdx = currentNote.idx.val + 1;
     currentNote.idx.func(newIdx); // CONSTRAIN TO MAX INDEX
+    currentNote.target_span.func(null);
   };
 
   return (
@@ -317,12 +319,14 @@ function StatsWindow() {
 function SelectorWindow() {
   const currentNote = useContext(NoteContext);
   const [notes, setNotes] = useState([]);
+  const [labels, setLabels] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const containerRef = useRef(null);
   // const cursor = {};
 
   const fetchNotes = async () => {
+    console.log('fetching notes');
     if (loading || !hasMore) return;
     setLoading(true);
     try {
@@ -359,18 +363,44 @@ function SelectorWindow() {
       setHasMore(false);
     }
   };
+
+  useEffect(() => {
+    console.log('fetching labels');
+    let fetchedLabels = [];
+    for (let i = 0; i < notes.length; i++) {
+      queryAnnotations(i).then((labels) => {
+        fetchedLabels.push(labels);
+      });
+    }
+
+    setLabels(fetchedLabels);
+    console.log('labels', fetchedLabels);
+    console.log('labels 2', labels[2]);
+  }, [notes])
+
   fetchNotes();
+
+  //   
+  //   }
+  // });
+
 
   const updateNoteIndex = (index) => {
     currentNote.idx.func(index)
+    currentNote.target_span.func(null);
   }
+
+  // console.log(fetchedLabels);
 
   return (
     <div ref={containerRef} className="overflow-y-auto h-full p-4 items-stretch">
       {notes.map((note, index) => (
         <button key={index} className="p-1 my-1 mx-auto w-full text-left bg-gray-200 hover:bg-blue-300 hover:text-blue-500 flex justify-between object-left" onClick={(event) => updateNoteIndex(index)}>
-          <div className="p-1 text-xl order-first">#{note.df_id}</div>
-          <div className="p-1 order-last">{note.category}</div>
+          <div className="h-full my-auto p-1 text-xl order-first">#{note.df_id}</div>
+          <div className="h-full p-1 order-last flex flex-row gap-2" style={{ backgroundColor: `${note.df_id === index ? bg-slate-600 : bg-slate-300}` }}> // FIX THIS LINE, REPLACE BG COLS WITH HEX VALS
+            <div className="h-full my-auto p-1">{note.category}</div>
+            <div className="h-full my-auto p-1 m-1 bg-white text-black font-bold text-xl rounded-xl leading-snug">{labels[index] ? labels[index].length : 0}</div>
+          </div>
         </button>
         // <div key={index} className="p-2 m-2 text-left bg-gray-200 hover:bg-blue-300 hover:text-blue-500 rounded">
         //   Note ID: {note.df_id} ------ {note.category}
