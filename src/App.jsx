@@ -52,7 +52,7 @@ function UploadButton() {
 
   return (
     <button
-      className="bg-slate-400 p-2 hover:bg-blue-400 rounded-md"
+      className="p-2 border-2 border-white hover:border-blue-200 hover:shadow-md rounded-md"
       onClick={handleUpload}
     >
       Upload File(s)
@@ -68,7 +68,7 @@ function RefreshButton() {
   };
 
   return (
-    <button className="bg-slate-400 p-2 hover:bg-blue-400 rounded-md" onClick={handleRefresh}>
+    <button className="p-2 border-2 border-white hover:border-blue-200 hover:shadow-md rounded-md" onClick={handleRefresh}>
       Refresh
     </button>
   );
@@ -76,12 +76,9 @@ function RefreshButton() {
 
 function ToolBar() {
   return (
-    <div className="w-full h-auto top-0 left-0 fixed bg-slate-200 flex flex-row gap-3 p-2 z-10">
+    <div className="w-full h-auto top-0 left-0 fixed flex flex-row gap-5 p-5 z-10">
       <UploadButton />
       <RefreshButton />
-      <button className="bg-slate-400 p-2 hover:bg-blue-400 rounded-md">
-        Ipsum
-      </button>
     </div>
   );
 }
@@ -101,7 +98,7 @@ function MainWindow() {
   
   return (
     <div className="h-full w-full flex flex-col">
-      <h1 className="bg-slate-400 p-1 rounded-t-lg">{labelCount} {labelCount !== 1 ? 'Labels' : 'Label'}</h1>
+      <h1 className="p-1">{labelCount} {labelCount !== 1 ? 'Labels' : 'Label'}</h1>
       <div className="flex w-full h-full overflow-auto">
         <DecrementButton />
         <MainTextBox />
@@ -306,11 +303,11 @@ function StatsWindow() {
 
   return (
     <div className="h-full w-full flex flex-col">
-      <h1 className="bg-slate-400 p-1 rounded-t-lg">Statistics</h1>
+      <h1 className="p-1 rounded-t-lg">Annotations</h1>
       <div className="w-full h-full grid grid-cols-3 p-2 gap-2">
-        <div className="bg-slate-200 w-full h-full">{formatSpanLabel(currentSpan, 0)}</div>
-        <div className="bg-slate-200 w-full h-full">{formatSpanLabel(currentSpan, 1)}</div>
-        <div className="bg-slate-200 w-full h-full">{formatSpanLabel(currentSpan, 2)}</div>
+        <div className="border-2 border-slate-100 w-full h-full">{formatSpanLabel(currentSpan, 0)}</div>
+        <div className="border-2 border-slate-100 w-full h-full">{formatSpanLabel(currentSpan, 1)}</div>
+        <div className="border-2 border-slate-100 w-full h-full">{formatSpanLabel(currentSpan, 2)}</div>
       </div>
     </div>
   );
@@ -394,12 +391,12 @@ function SelectorWindow() {
 
   return (
     <div ref={containerRef} className="overflow-y-auto h-full p-4 items-stretch">
-      {notes.map((note, index) => (
-        <button key={index} className="p-1 my-1 mx-auto w-full text-left bg-gray-200 hover:bg-blue-300 hover:text-blue-500 flex justify-between object-left" onClick={(event) => updateNoteIndex(index)}>
-          <div className="h-full my-auto p-1 text-xl order-first">#{note.df_id}</div>
-          <div className="h-full p-1 order-last flex flex-row gap-2" style={{ backgroundColor: `${note.df_id === index ? bg-slate-600 : bg-slate-300}` }}> // FIX THIS LINE, REPLACE BG COLS WITH HEX VALS
+      {notes.map((note, noteIndex) => (
+        <button key={noteIndex} className="py-1 px-3 my-1 mx-auto w-full text-left rounded-2xl border-2 border-slate-100 hover:border-blue-300 hover:shadow-inner flex justify-between object-left" onClick={(event) => updateNoteIndex(noteIndex)}>
+          <div className="h-full my-auto p-2 text-xl order-first rounded-2xl border-2" style={{ borderColor: `${note.df_id === currentNote.idx.val ? '#3B82F6' : '#F1F5F9'}` }}>#{note.df_id}</div>
+          <div className="h-full p-1 order-last flex flex-row gap-2">
             <div className="h-full my-auto p-1">{note.category}</div>
-            <div className="h-full my-auto p-1 m-1 bg-white text-black font-bold text-xl rounded-xl leading-snug">{labels[index] ? labels[index].length : 0}</div>
+            <div className="h-full p-2 m-1 border-2 border-slate-300 font-bold text-xl rounded-xl leading-snug">{labels[noteIndex] ? labels[noteIndex].length : 0}</div>
           </div>
         </button>
         // <div key={index} className="p-2 m-2 text-left bg-gray-200 hover:bg-blue-300 hover:text-blue-500 rounded">
@@ -429,14 +426,14 @@ function App() {
       }}
     >
       <ToolBar />
-      <div className="grid grid-rows-5 grid-cols-3 gap-5 inset-0 mt-20 m-10 fixed">
-        <div className="bg-slate-300 col-span-2 row-span-3 rounded-lg">
+      <div className="grid grid-rows-5 grid-cols-3 gap-5 inset-0 mt-24 m-10 fixed">
+        <div className="bg-slate-100 shadow-inner col-span-2 row-span-3 rounded-lg">
           <MainWindow />
         </div>
-        <div className="bg-slate-300 row-span-5 rounded-lg">
+        <div className="bg-slate-100 shadow-inner row-span-5 rounded-lg">
           <SelectorWindow />
         </div>
-        <div className="bg-slate-300 col-span-2 row-span-2 rounded-lg">
+        <div className="bg-slate-100 shadow-inner col-span-2 row-span-2 rounded-lg">
           <StatsWindow />
         </div>
       </div>
