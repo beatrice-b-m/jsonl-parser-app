@@ -7,8 +7,8 @@ const NoteContext = createContext(null);
 const storeNameNote = "note_store";
 // const pageSize = 30;
 
-function UploadButton() {
-  const handleUpload = () => {
+function AnnotationUploadButton() {
+  const handleAnnotationUpload = () => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".jsonl";
@@ -54,12 +54,79 @@ function UploadButton() {
   return (
     <button
       className="p-2 border-2 border-white hover:border-blue-200 hover:shadow-md rounded-md"
-      onClick={handleUpload}
+      onClick={handleAnnotationUpload}
     >
       Upload File(s)
     </button>
   );
 }
+
+function LabelUploadButton() {
+  const handleLabelUpload = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.multiple = false;
+
+    input.addEventListener("change", () => {
+      // uploadAndProcess(input);
+      console.log(input.files[0]);
+    });
+
+    input.click();
+  };
+
+  return (
+    <button
+      className="p-2 border-2 border-white hover:border-blue-200 hover:shadow-md rounded-md"
+      onClick={handleLabelUpload}
+    >
+      Upload Labels
+    </button>
+  );
+}
+
+
+function UploadPopButton() {
+  const [show, setShow] = useState(false);
+  const toggleShow = (e, newState, location) => {
+    console.log('triggered from', location)
+    e.stopPropagation();
+    setShow(newState);
+  };
+
+  return (
+    <div className="p-2 border-2 border-white hover:border-blue-200 hover:shadow-md rounded-md" onClick={(e) => toggleShow(e, true, 'parent') }>
+      Upload
+      <UploadPop trigger={show} toggleTrigger={toggleShow}></UploadPop>
+    </div>
+  );
+}
+
+
+function UploadPop(props) {
+
+  const handleClick = () => {
+    props.setTrigger(false)
+    console.log('clicked', props.trigger)
+  }
+
+  return (props.trigger) ? (
+      <div className='fixed top-0 left-0 w-full h-full bg-slate-200 bg-opacity-60 flex justify-center items-center'>
+          <div className="relative w-1/3 bg-white flex flex-col rounded-xl shadow-lg items-center">
+              <div className="h-auto w-full p-2 flex justify-end">
+                  <button className="text-xl p-2 border-2 border-white hover:border-blue-200 hover:shadow-md rounded-md" onClick={(e) => props.toggleTrigger(e, false, 'child')}>&#x2715;</button>
+              </div>
+              <div className="w-2/3 p-5 flex justify-self-center justify-between">
+                    < AnnotationUploadButton/>
+                    < LabelUploadButton/>
+              </div>
+          </div>
+      </div>
+  ) : "";
+}
+
+
 
 function RefreshButton() {
   const currentNote = useContext(NoteContext);
@@ -87,7 +154,7 @@ function AgreeButton() {
   return (
     <button className="p-2 border-2 border-white hover:border-blue-200 hover:shadow-md rounded-md" onClick={handleClick}>
       Agreement
-      <AgreePop trigger={show}>TEST</AgreePop>
+      <AgreePop trigger={show}>i still need to finish this come back later !! </AgreePop>
     </button>
   );
 }
@@ -95,7 +162,8 @@ function AgreeButton() {
 function ToolBar() {
   return (
     <div className="w-full h-auto top-0 left-0 fixed flex flex-row gap-5 p-5 z-10">
-      <UploadButton />
+      <UploadPopButton />
+      {/* <LabelUploadButton /> */}
       <RefreshButton />
       <AgreeButton />
     </div>
