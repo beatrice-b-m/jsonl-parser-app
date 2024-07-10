@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useContext, createContext } from "react";
 import { openDatabase, addToDatabase, queryNoteIndex, queryAnnotations, findBgColor } from "./DataBase.js";
 import "./App.css";
+import AgreePop from "./components/AgreePop";
 
 const NoteContext = createContext(null);
 const storeNameNote = "note_store";
@@ -74,11 +75,29 @@ function RefreshButton() {
   );
 }
 
+function AgreeButton() {
+  const [show, setShow] = useState(false);
+
+  
+
+  const handleClick = () => {
+    setShow(show => !show);
+  };
+
+  return (
+    <button className="p-2 border-2 border-white hover:border-blue-200 hover:shadow-md rounded-md" onClick={handleClick}>
+      Agreement
+      <AgreePop trigger={show}>TEST</AgreePop>
+    </button>
+  );
+}
+
 function ToolBar() {
   return (
     <div className="w-full h-auto top-0 left-0 fixed flex flex-row gap-5 p-5 z-10">
       <UploadButton />
       <RefreshButton />
+      <AgreeButton />
     </div>
   );
 }
@@ -176,7 +195,7 @@ function formatAnnotations(newLabels, newData) {
   return sliceArray;
 }
 
-function labelCurrentNote(currentNote, sliceArray) { // apply block and text-center on click
+function labelCurrentNote(currentNote, sliceArray) {
   let outString = "";
   sliceArray.forEach((slice, sliceIndex) => {
     const uniqueLabels = [...new Set(slice.label_id)];
@@ -304,7 +323,7 @@ function StatsWindow() {
   return (
     <div className="h-full w-full flex flex-col">
       <h1 className="p-1 rounded-t-lg">Annotations</h1>
-      <div className="w-full h-full grid grid-cols-3 p-2 gap-2">
+      <div className="w-full h-full grid grid-cols-3 p-2 gap-2 overflow-auto">
         <div className="border-2 border-slate-100 w-full h-full">{formatSpanLabel(currentSpan, 0)}</div>
         <div className="border-2 border-slate-100 w-full h-full">{formatSpanLabel(currentSpan, 1)}</div>
         <div className="border-2 border-slate-100 w-full h-full">{formatSpanLabel(currentSpan, 2)}</div>
@@ -338,9 +357,6 @@ function SelectorWindow() {
           const cursor = e.target.result; 
           if (cursor) {
             fetchedNotes.push(cursor.value);
-            // console.log('cursor', cursor)
-            // console.log('cursor.key', cursor.key)
-            // cursorRef.current = cursor.key;  // Update the cursor reference to the current cursor key
             cursor.continue();
           } else {
             console.log('no more notes')
@@ -371,16 +387,9 @@ function SelectorWindow() {
     }
 
     setLabels(fetchedLabels);
-    console.log('labels', fetchedLabels);
-    console.log('labels 2', labels[2]);
   }, [notes])
 
   fetchNotes();
-
-  //   
-  //   }
-  // });
-
 
   const updateNoteIndex = (index) => {
     currentNote.idx.func(index)
@@ -419,7 +428,6 @@ function App() {
     <NoteContext.Provider
       value={{
         idx: { val: noteIndex, func: setNoteIndex },
-        // data: { val: noteData, func: setNoteData },
         print: {val: printData, func: setPrintData},
         spans: {val: spanData, func: setSpanData},
         target_span: {val: targetSpan, func: setTargetSpan}
